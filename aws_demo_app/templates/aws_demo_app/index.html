@@ -1,0 +1,85 @@
+{% extends 'aws_demo_app/base.html' %}
+
+{% block title %}Home | AWS Demo App{% endblock %}
+
+{% block carousel %}
+
+    <!-- Carousel -->
+    <div class="carousel carousel-slider" id="main-carousel" style="height:400px;" data-aos="fade-up">
+        <a class="carousel-item" href="#one!"><img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"><div class="carousel-caption"><h3>Welcome to AWS Demo App</h3></div></a>
+        <a class="carousel-item" href="#two!"><img src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=800&q=80"><div class="carousel-caption"><h3>Easy to Use</h3></div></a>
+        <a class="carousel-item" href="#three!"><img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=800&q=80"><div class="carousel-caption"><h3>Fast & Responsive</h3></div></a>
+    </div>
+
+        <!-- Carousel Arrows -->
+    <button id="carousel-prev" class="carousel-arrow left" style="position:absolute;top:50%;left:20px;z-index:10;background:rgba(0,0,0,0.4);border:none;color:#fff;font-size:2rem;border-radius:50%;width:48px;height:48px;transform:translateY(-50%);cursor:pointer;">
+        <i class="fa-solid fa-circle-arrow-left"></i>
+    </button>
+    <button id="carousel-next" class="carousel-arrow right" style="position:absolute;top:50%;right:20px;z-index:10;background:rgba(0,0,0,0.4);border:none;color:#fff;font-size:2rem;border-radius:50%;width:48px;height:48px;transform:translateY(-50%);cursor:pointer;">
+        <i class="fa-solid fa-circle-arrow-right"></i>
+    </button>
+</div>
+{% endblock %}
+
+
+    {% block content %}
+    <div class="container">
+    <!-- Add User Form -->
+    <div class="card" data-aos="fade-up" style="margin-top:40px;">
+        <div class="card-content">
+            <span class="card-title">Add New User</span>
+            <form method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="input-field col s6">
+                        <input name="name" type="text" required>
+                        <label>Name</label>
+                    </div>
+                    <div class="input-field col s6">
+                        <input name="email" type="email" required>
+                        <label>Email</label>
+                    </div>
+                </div>
+                <button class="btn waves-effect waves-light" type="submit">Add User</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Users Table -->
+    <h5 style="margin-top:40px;" data-aos="fade-up">Existing Users</h5>
+    <table class="striped highlight responsive-table" data-aos="fade-up">
+        <thead>
+            <tr><th>ID</th><th>Name</th><th>Email</th><th>Created At</th></tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.name }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.created_at }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4">No users yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('.carousel');
+    var instances = M.Carousel.init(elems, { fullWidth: true, indicators: true });
+
+    // Arrow navigation
+    document.getElementById('carousel-prev').onclick = function() { instances[0].prev(); };
+    document.getElementById('carousel-next').onclick = function() { instances[0].next(); };
+
+    // Auto-slide every 3 seconds
+    setInterval(() => instances[0].next(), 3000);
+});
+</script>
+{% endblock %}

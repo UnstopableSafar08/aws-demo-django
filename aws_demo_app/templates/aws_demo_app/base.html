@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}AWS Demo App{% endblock %}</title>
+      <link rel="icon" type="image/png" href="https://img.icons8.com/color/48/000000/amazon-web-services.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Poppins', sans-serif; background: #f4f7f9; }
+        nav { background: linear-gradient(45deg, #1976d2, #42a5f5); box-shadow: 0 3px 10px rgba(0,0,0,0.1); }
+        footer { width: 100%; margin-top: 40px; padding: 20px 0; background: #1976d2; color: #fff; text-align: center; }
+        #main-carousel { width: 100%; margin-bottom: 40px; }
+        .carousel-caption { position: absolute; bottom: 45px; left: 50%; transform: translateX(-50%); color: #fff; background: rgba(0,0,0,0.4); padding: 16px 24px; border-radius: 8px; max-width: 350px; text-align: center; }
+        .nav-wrapper .right input[type=search] { background: #ffffff; color: #c50909; padding: 0 10px; border-radius: 15px; margin: 15px; height: 30px; }
+    </style>
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <!-- Navbar -->
+<nav>
+  <div class="nav-wrapper">
+    <a href="{% url 'home' %}" class="brand-logo" style="margin-left: 15px;">
+      <i class="fab fa-aws" style="font-size: 2.2rem; vertical-align: middle; color: #ff9900; margin-left: 40px;"></i>
+    </a>
+    <ul id="nav-mobile" class="left hide-on-med-and-down" style="margin-left: 130px;">
+      <li><a href="{% url 'home' %}">Home</a></li>
+      <li><a href="#about">About Us</a></li>
+      <li><a href="#contact">Contact Us</a></li>
+      <li><a href="/admin/">Admin</a></li>  <!-- New nav item -->
+    </ul>
+    <ul class="right">
+      <li>
+          <form id="searchForm">
+            <div class="input-field">
+              <input type="search" id="search"  placeholder="Search by name" required>
+            </div>
+          </form>
+      </li>
+    </ul>
+  </div>
+</nav>
+    {% block carousel %}{% endblock %}
+    {% block content %}{% endblock %}
+
+    <footer>&copy; 2025 AWS Demo App | Designed by Sagar Malla</footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+        AOS.init();
+        document.addEventListener('DOMContentLoaded', function() {
+            var elems = document.querySelectorAll('.carousel');
+            var instances = M.Carousel.init(elems, { fullWidth: true, indicators: true });
+            setInterval(() => instances[0].next(), 3000);
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+mkdir aws_demo_project
+cd aws_demo_project
+
+python -m venv venv
+.\venv\Scripts\Activate # on windows
+ 
+pip install django mysqlclient
+python -m pip install --upgrade pip
+django-admin startproject aws_demo .
+python manage.py startapp aws_demo_app
+python manage.py makemigrations
+python manage.py makemigrations
+python manage.py migrate
+python manage.py createsuperuser # admin admin@123#
+python manage.py runserver
+
+
+
+  aws-demo-django/
+├── manage.py
+├── aws_demo/         # Django project folder
+│   ├── __init__.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+├── aws_demo_app/     # Your newly created app
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── views.py
+│   ├── urls.py       # create this file
+│   └── migrations/
+├── venv/             # Virtual environment
