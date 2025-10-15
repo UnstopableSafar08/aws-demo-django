@@ -30,8 +30,8 @@ This project demonstrates basic **CRUD operations**, database integration, and D
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/aws_demo_project.git
-cd aws_demo_project
+git clone [https://github.com/yourusername/aws_demo_django.git](https://github.com/UnstopableSafar08/aws-demo-django.git)
+cd aws_demo_django
 ```
 
 ---
@@ -96,7 +96,7 @@ FLUSH PRIVILEGES;
 EXIT;
 ```
 
-3. Update `aws_demo_project/settings.py`:
+3. Update `aws_demo_django/settings.py`:
 
 ```python
 DATABASES = {
@@ -152,7 +152,7 @@ Access Django admin: [http://127.0.0.1:8000/admin](http://127.0.0.1:8000/admin)
 ## Project Structure
 
 ```
-aws_demo_project/
+aws_demo_django/
 ├── aws_demo/            # Django project settings
 ├── aws_demo_app/        # Django application
 ├── venv/                # Python virtual environment
