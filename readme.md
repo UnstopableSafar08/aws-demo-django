@@ -26,7 +26,11 @@ This project demonstrates basic **CRUD operations**, database integration, and D
 ---
 
 ## Setup Instructions
-
+```bash
+yum update -y
+sudo dnf install git -y
+sudo dnf install python3 python3-pip -y
+```
 ### 1. Clone the Repository
 
 ```bash
