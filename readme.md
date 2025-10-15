@@ -35,7 +35,7 @@ sudo dnf install python3 python3-pip -y
 
 ```bash
 git clone https://github.com/UnstopableSafar08/aws-demo-django.git
-cd aws_demo_django
+cd aws-demo-django
 ```
 
 ---
@@ -100,7 +100,7 @@ FLUSH PRIVILEGES;
 EXIT;
 ```
 
-3. Update `aws_demo_django/settings.py`:
+3. Update `aws-demo-django/settings.py`:
 
 ```python
 DATABASES = {
@@ -156,7 +156,7 @@ Access Django admin: [http://127.0.0.1:8000/admin](http://127.0.0.1:8000/admin)
 ## Project Structure
 
 ```
-aws_demo_django/
+aws-demo-django/
 ├── aws_demo/            # Django project settings
 ├── aws_demo_app/        # Django application
 ├── venv/                # Python virtual environment
