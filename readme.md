@@ -30,7 +30,7 @@ This project demonstrates basic **CRUD operations**, database integration, and D
 ### 1. Clone the Repository
 
 ```bash
-git clone [https://github.com/yourusername/aws_demo_django.git](https://github.com/UnstopableSafar08/aws-demo-django.git)
+git clone https://github.com/UnstopableSafar08/aws-demo-django.git
 cd aws_demo_django
 ```
 
