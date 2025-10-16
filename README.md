@@ -29,8 +29,27 @@ This project demonstrates basic **CRUD operations**, database integration, and D
 ```bash
 yum update -y
 sudo dnf install git -y
-sudo dnf install python3 python3-pip -y
+dnf install -y python3.11 python3.11-pip -y
 ```
+
+<!-- Install Python3.11
+```bash
+yum -y install wget make gcc openssl-devel bzip2-devel libffi-devel zlib-devel xz-devel readline-devel sqlite-devel tk-devel && \
+cd /tmp && \
+wget https://www.python.org/ftp/python/3.11.9/Python-3.11.9.tgz && \
+tar xzf Python-3.11.9.tgz && \
+cd Python-3.11.9 && \
+./configure --enable-optimizations && \
+make altinstall
+
+
+ln -sfn /usr/local/bin/python3.11 /usr/bin/python3.11 && \
+ln -sfn /usr/local/bin/pip3.11 /usr/bin/pip3.11
+
+python3.11
+pip3.11 -V
+``` -->
+
 ### 1. Clone the Repository
 
 ```bash
@@ -44,7 +63,7 @@ cd aws-demo-django
 
 #### Linux / macOS
 ```bash
-python3 -m venv venv
+python3.11 -m venv venv
 source venv/bin/activate
 ```
 

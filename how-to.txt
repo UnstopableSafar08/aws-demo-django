@@ -16,19 +16,26 @@ python manage.py runserver
 
 
 
-  aws-demo-django/
+
+aws-demo-django
+├── aws_demo
+│   ├── asgi.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+├── aws_demo_app
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── templates
+│   │   └── aws_demo_app
+│   │       ├── base.html
+│   │       └── index.html
+│   ├── tests.py
+│   ├── urls.py
+│   └── views.py
+├── how-to.txt
 ├── manage.py
-├── aws_demo/         # Django project folder
-│   ├── __init__.py
-│   ├── settings.py
-│   ├── urls.py
-│   └── wsgi.py
-├── aws_demo_app/     # Your newly created app
-│   ├── __init__.py
-│   ├── admin.py
-│   ├── apps.py
-│   ├── models.py
-│   ├── views.py
-│   ├── urls.py       # create this file
-│   └── migrations/
-├── venv/             # Virtual environment
+├── readme.md
+├── requirements.txt
+└── tree.txt
