@@ -5,11 +5,25 @@
 {% block carousel %}
 
     <!-- Carousel -->
+    {% comment %} <div class="carousel carousel-slider" id="main-carousel" style="height:400px;" data-aos="fade-up">
+        <a class="carousel-item" href="#one!"><img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"><div class="carousel-caption"><h4>Welcome to AWS Demo App</h4></div></a>
+        <a class="carousel-item" href="#two!"><img src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=800&q=80"><div class="carousel-caption"><h4>Easy to Use</h4></div></a>
+        <a class="carousel-item" href="#three!"><img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=800&q=80"><div class="carousel-caption"><h4>Fast & Responsive</h4></div></a>
+        <a class="carousel-item" href="#four!"><img src="https://this-is-my-test-bucket-sagar-2222.s3.us-east-1.amazonaws.com/viber_image_2025-10-20_20-49-22-055.jpg"><div class="carousel-caption"><h4>s3 test</h4></div></a>
+    </div> {% endcomment %}
+
     <div class="carousel carousel-slider" id="main-carousel" style="height:400px;" data-aos="fade-up">
-        <a class="carousel-item" href="#one!"><img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"><div class="carousel-caption"><h3>Welcome to AWS Demo App</h3></div></a>
-        <a class="carousel-item" href="#two!"><img src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=800&q=80"><div class="carousel-caption"><h3>Easy to Use</h3></div></a>
-        <a class="carousel-item" href="#three!"><img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=800&q=80"><div class="carousel-caption"><h3>Fast & Responsive</h3></div></a>
+        <a class="carousel-item" href="#one!"><img src="https://this-is-my-test-bucket-sagar-2222.s3.us-east-1.amazonaws.com/images/0.jpg"><div class="carousel-caption"><h4>Welcome to AWS Demo App</h4></div></a>
+        <a class="carousel-item" href="#two!"><img src="https://this-is-my-test-bucket-sagar-2222.s3.us-east-1.amazonaws.com/images/1.jpg"><div class="carousel-caption"><h4>Easy to Use</h4></div></a>
+        <a class="carousel-item" href="#three!"><img src="https://this-is-my-test-bucket-sagar-2222.s3.us-east-1.amazonaws.com/images/2.jpg"><div class="carousel-caption"><h4>Fast & Responsive</h4></div></a>
+        <a class="carousel-item" href="#four!"><img src="https://this-is-my-test-bucket-sagar-2222.s3.us-east-1.amazonaws.com/images/3.jpg"><div class="carousel-caption"><h4>Simple and Optimized</h4></div></a>
+        <a class="carousel-item" href="#five!"><img src="https://this-is-my-test-bucket-sagar-2222.s3.us-east-1.amazonaws.com/images/4.jpg"><div class="carousel-caption"><h4>Simple and Optimized</h4></div></a>
+        <a class="carousel-item" href="#six!"><img src="https://this-is-my-test-bucket-sagar-2222.s3.us-east-1.amazonaws.com/images/5.jpg"><div class="carousel-caption"><h4>Static file</h4></div></a>
+        <a class="carousel-item" href="#seven!"><img src="https://this-is-my-test-bucket-sagar-2222.s3.us-east-1.amazonaws.com/images/6.jpg"><div class="carousel-caption"><h4>JPEG File</h4></div></a>
+        <a class="carousel-item" href="#eight!"><img src="https://this-is-my-test-bucket-sagar-2222.s3.us-east-1.amazonaws.com/images/7.jpg"><div class="carousel-caption"><h4>Simple file</h4></div></a>
     </div>
+
+
 
         <!-- Carousel Arrows -->
     <button id="carousel-prev" class="carousel-arrow left" style="position:absolute;top:50%;left:20px;z-index:10;background:rgba(0,0,0,0.4);border:none;color:#fff;font-size:2rem;border-radius:50%;width:48px;height:48px;transform:translateY(-50%);cursor:pointer;">
@@ -25,7 +39,7 @@
     {% block content %}
     <div class="container">
     <!-- Add User Form -->
-    <div class="card" data-aos="fade-up" style="margin-top:40px;">
+    <div class="card" data-aos="fade-down" style="margin-top:40px;">
         <div class="card-content">
             <span class="card-title">Add New User</span>
             <form method="post">
