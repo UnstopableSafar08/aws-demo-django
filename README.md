@@ -25,7 +25,7 @@ This project demonstrates basic **CRUD operations**, database integration, and D
 
 ---
 
-This README provides step-by-step instructions to deploy a Django application on **Ubuntu Server** and **Amazon Linux 2023**, including optional Python tarball installation and MySQL 8.0.42 database configuration.
+This README provides step-by-step instructions to deploy a Django application on **Ubuntu Server** and **Amazon Linux 2023**, including optional Python tarball installation and MySQL 8.0.x database configuration.
 
 ---
 
@@ -37,7 +37,7 @@ This README provides step-by-step instructions to deploy a Django application on
     - [Clone Django App Repository](#4-clone-django-app-repository)
     - [Create and Activate Python Virtual Environment](#5-create-and-activate-python-virtual-environment)
     - [Upgrade pip and Install Python Dependencies](#6-upgrade-pip-and-install-python-dependencies)
-    - [Database Configuration (MySQL 8.0.42)](#7-database-configuration-mysql-8042)
+    - [Database Configuration (MySQL 8.0.x)](#7-database-configuration-mysql-8042)
     - [Apply Database Migrations and Collect Static Files](#8-apply-database-migrations-and-collect-static-files)
     - [Optional: Create Superuser](#9-optional-create-superuser)
     - [Install Gunicorn and Test Run](#10-install-gunicorn-and-test-run)
@@ -54,7 +54,7 @@ This README provides step-by-step instructions to deploy a Django application on
     - [Setup your Django app directory](#4-setup-your-django-app-directory)
     - [Create virtual environment and activate](#5-create-virtual-environment-and-activate)
     - [Upgrade pip and install requirements](#6-upgrade-pip-and-install-requirements)
-    - [Database Configuration (MySQL 8.0.42)](#7-database-configuration-mysql-8042-1)
+    - [Database Configuration (MySQL 8.0.x)](#7-database-configuration-mysql-8042-1)
     - [Apply database migrations](#8-apply-database-migrations)
     - [Create Django superuser (optional)](#9-create-django-superuser-optional)
     - [Collect static files](#10-collect-static-files)
@@ -106,7 +106,7 @@ pip install --upgrade pip setuptools wheel
 pip install -r requirements.txt
 ```
 
-### 7. Database Configuration (MySQL 8.0.42)
+### 7. Database Configuration (MySQL 8.0.x)
 ```bash
 
 # Download MySQL 8.0 repository package
@@ -210,9 +210,17 @@ cat >/etc/nginx/conf.d/django-app.conf <<'EOF'
 server {
     listen 80;
     server_name _;
+
     location / {
         proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
     }
+
+    access_log /var/log/nginx/aws-demo-access.log;
+    error_log  /var/log/nginx/aws-demo-error.log;
 }
 EOF
 
@@ -305,15 +313,57 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 7. Database Configuration (MySQL 8.0.42)
+### 7. Database Configuration (MySQL 8.0.x)
 ```bash
+sudo apparmor_status
+sudo systemctl stop apparmor
+sudo systemctl disable apparmor
+sudo systemctl daemon-reload
+
+sudo apt-get update -y && sudo apt-get upgrade -y
+
+# ----------- mysql installation -----------
+echo 'Acquire::AllowInsecureRepositories "true";' >> /etc/apt/apt.conf.d/99allowunsigned
+sudo apt update
+
+wget https://dev.mysql.com/get/mysql-apt-config_0.8.16-1_all.deb
+sudo dpkg -i mysql-apt-config_0.8.16-1_all.deb
+sudo apt install -f mysql-client=8.0* mysql-server=8.0* # mysql installed with the blank root password
+
+# chooese the bionic and mysql db version then press ok
+
+
+systemctl status mysql
+systemctl start mysql
+systemctl enable mysql
+mysql -V
+mysql_secure_installation
+
+
+# Create a database and user for Django
+mysql -u root -p # press enter for password
+# SET GLOBAL validate.password_policy=LOW;
+# SET GLOBAL validate.password_length=6;
+# SET GLOBAL validate_password.length=6;
+# SET GLOBAL validate_password.policy=LOW;
+
+CREATE DATABASE django_db;
+CREATE USER 'django_user'@'%' IDENTIFIED BY 'django_password'; 
+GRANT ALL PRIVILEGES ON *.* TO 'django_user'@'%'; 
+ALTER USER 'django_user' IDENTIFIED WITH mysql_native_password BY 'django_password';
+FLUSH PRIVILEGES;
+SHOW DATABASES;
+SELECT USER, HOST FROM mysql.user;
+
+
 # Update Django settings.py DATABASES section
+# PATH : /root/aws-demo-django/aws_demo/settings.py
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'django_db',
         'USER': 'django_user',
-        'PASSWORD': 'your_password',
+        'PASSWORD': 'django_password',
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -373,9 +423,17 @@ cat >/etc/nginx/sites-available/django.conf <<'EOF'
 server {
     listen 80;
     server_name _;
+
     location / {
         proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
     }
+
+    access_log /var/log/nginx/aws-demo-access.log;
+    error_log  /var/log/nginx/aws-demo-error.log;
 }
 EOF
 
