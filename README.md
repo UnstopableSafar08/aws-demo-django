@@ -25,364 +25,164 @@ This project demonstrates basic **CRUD operations**, database integration, and D
 
 ---
 
-## Setup Instructions
-```bash
-yum update -y
-sudo dnf install git -y
-dnf install -y python3.11 python3.11-pip -y
+This README provides step-by-step instructions to deploy a Django application on **Ubuntu Server** and **Amazon Linux 2023**, including optional Python tarball installation and MySQL 8.0.42 database configuration.
 
-# optional packages for a amazonlinux 2023, the mysql-devel is not avaliable on the official packages.
-# if this packages is not installed, the django dependencies: mysqlclient==2.2.7 can not install.
-sudo dnf install mariadb105-devel -y 
+---
+
+## Table of Contents
+1. [Amazon Linux 2023 Deployment](#amazon-linux-2023-deployment)
+    - [Update System](#1-update-system)
+    - [Install Build Tools, Python 3.12, and Libraries](#2-install-build-tools-python-312-and-libraries)
+    - [Verify Python 3.12](#3-verify-python-312)
+    - [Clone Django App Repository](#4-clone-django-app-repository)
+    - [Create and Activate Python Virtual Environment](#5-create-and-activate-python-virtual-environment)
+    - [Upgrade pip and Install Python Dependencies](#6-upgrade-pip-and-install-python-dependencies)
+    - [Database Configuration (MySQL 8.0.42)](#7-database-configuration-mysql-8042)
+    - [Apply Database Migrations and Collect Static Files](#8-apply-database-migrations-and-collect-static-files)
+    - [Optional: Create Superuser](#9-optional-create-superuser)
+    - [Install Gunicorn and Test Run](#10-install-gunicorn-and-test-run)
+    - [Configure Gunicorn systemd Service](#11-configure-gunicorn-systemd-service)
+    - [Configure NGINX Reverse Proxy](#12-configure-nginx-reverse-proxy)
+    - [Open Firewall for HTTP/HTTPS](#13-open-firewall-for-httphttps-if-firewalld-is-enabled)
+    - [Verify Services](#14-verify-services)
+    - [Access Your Django App](#15-access-your-django-app)
+    - [Optional: Install Python 3.10 via Tarball](#optional-install-python-310-via-tarball)
+2. [Ubuntu Server Deployment](#ubuntu-server-deployment)
+    - [Update system and install dependencies](#1-update-system-and-install-dependencies)
+    - [Install Python 3.10](#2-install-python-310)
+    - [Verify Python](#3-verify-python)
+    - [Setup your Django app directory](#4-setup-your-django-app-directory)
+    - [Create virtual environment and activate](#5-create-virtual-environment-and-activate)
+    - [Upgrade pip and install requirements](#6-upgrade-pip-and-install-requirements)
+    - [Database Configuration (MySQL 8.0.42)](#7-database-configuration-mysql-8042-1)
+    - [Apply database migrations](#8-apply-database-migrations)
+    - [Create Django superuser (optional)](#9-create-django-superuser-optional)
+    - [Collect static files](#10-collect-static-files)
+    - [Run Django app (development mode)](#11-run-django-app-development-mode)
+    - [For Production with Gunicorn + Nginx](#12-for-production-with-gunicorn--nginx)
+    - [Enable Gunicorn as systemd service](#enable-gunicorn-as-systemd-service)
+    - [Optional: Install Python 3.10 via Tarball](#optional-install-python-310-via-tarball-1)
+
+---
+
+## Setup Instructions
+## Amazon Linux 2023 Deployment
+
+### 1. Update System
+```bash
+dnf update -y
 ```
 
-<!-- Install Python3.11
+### 2. Install Build Tools, Python 3.12, and Libraries
 ```bash
-yum -y install wget make gcc openssl-devel bzip2-devel libffi-devel zlib-devel xz-devel readline-devel sqlite-devel tk-devel && \
-cd /tmp && \
-wget https://www.python.org/ftp/python/3.11.9/Python-3.11.9.tgz && \
-tar xzf Python-3.11.9.tgz && \
-cd Python-3.11.9 && \
-./configure --enable-optimizations && \
-make altinstall
+dnf install -y git gcc gcc-c++ make pkgconfig openssl-devel bzip2-devel \
+libffi-devel zlib-devel ncurses-devel readline-devel sqlite-devel tk-devel \
+xz-devel gdbm-devel nginx python3.12 python3.12-devel python3.12-pip \
+python3.12-setuptools python3.12-wheel mariadb105-devel
+```
 
-
-ln -sfn /usr/local/bin/python3.11 /usr/bin/python3.11 && \
-ln -sfn /usr/local/bin/pip3.11 /usr/bin/pip3.11
-
-python3.11
-pip3.11 -V
-``` -->
-
-### 1. Clone the Repository
-
+### 3. Verify Python 3.12
 ```bash
+python3.12 -V
+pip3.12 -V
+```
+
+### 4. Clone Django App Repository
+```bash
+cd /root
 git clone https://github.com/UnstopableSafar08/aws-demo-django.git
 cd aws-demo-django
 ```
 
----
-
-### 2. Create Python Virtual Environment
-
-#### Linux / macOS
+### 5. Create and Activate Python Virtual Environment
 ```bash
-python3.11 -m venv venv
+python3.12 -m venv venv
 source venv/bin/activate
 ```
 
-#### Windows
-```cmd
-python -m venv venv
-.\venv\Scripts\activate
-```
-
----
-
-### 3. Install Dependencies
-
+### 6. Upgrade pip and Install Python Dependencies
 ```bash
-pip install --upgrade pip
+pip install --upgrade pip setuptools wheel
 pip install -r requirements.txt
 ```
 
-#### requirements.txt
-```
-asgiref==3.10.0
-Django==5.2.7
-django-jazzmin==3.0.1
-mysqlclient==2.2.7
-sqlparse==0.5.3
-typing_extensions==4.15.0
-tzdata==2025.2
-```
-
-> **Note:** On Linux, you may need MySQL development libraries:
-> ```bash
-> sudo dnf install python3-devel mysql-devel  # RHEL / Fedora / CentOS / Rocky
-> sudo apt install python3-dev default-libmysqlclient-dev  # Ubuntu / Debian
-> ```
-
----
-
-### 4. Configure MySQL Database
-
-1. Log into MySQL:
-
+### 7. Database Configuration (MySQL 8.0.42)
 ```bash
+
+# Download MySQL 8.0 repository package
+wget https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm
+
+# Install the repository
+dnf install mysql80-community-release-el9-1.noarch.rpm -y
+
+# Import MySQL GPG key
+rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2023
+
+# Install MySQL server
+dnf install mysql-community-server -y
+
+# Start and check MySQL service
+systemctl enable --now mysqld
+systemctl status mysqld
+
+# Get the temporary password
+grep -i "temporary password" /var/log/mysqld.log
+
+# Secure MySQL installation
+mysql_secure_installation # new password : thiS_!$-MyN3wPW
+
+
+# Create a database and user for Django
 mysql -u root -p
-```
+# SET GLOBAL validate.password_policy=LOW;
+# SET GLOBAL validate.password_length=6;
 
-2. Create database:
+SET GLOBAL validate_password.length=6;
+SET GLOBAL validate_password.policy=LOW;
 
-```sql
-CREATE DATABASE aws_demo_db;
-CREATE USER 'aws_demo_user'@'localhost' IDENTIFIED BY 'password123';
-GRANT ALL PRIVILEGES ON aws_demo_db.* TO 'aws_demo_user'@'localhost';
+CREATE DATABASE django_db;
+CREATE USER 'django_user'@'%' IDENTIFIED BY 'django_password'; 
+GRANT ALL PRIVILEGES ON *.* TO 'django_user'@'%'; 
+ALTER USER 'django_user' IDENTIFIED WITH mysql_native_password BY 'django_password';
 FLUSH PRIVILEGES;
-EXIT;
-```
+SHOW DATABASES;
+SELECT USER, HOST FROM mysql.user;
 
-3. Update `aws-demo-django/settings.py`:
 
-```python
+# Update Django settings.py DATABASES section
+# PATH : /root/aws-demo-django/aws_demo/settings.py
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'aws_demo_db',
-        'USER': 'aws_demo_user',
-        'PASSWORD': 'password123',
+        'NAME': 'django_db',
+        'USER': 'django_user',
+        'PASSWORD': 'django_password',
         'HOST': 'localhost',
         'PORT': '3306',
     }
 }
 ```
 
----
-
-### 5. Apply Migrations
-
+### 8. Apply Database Migrations and Collect Static Files
 ```bash
 python manage.py makemigrations
 python manage.py migrate
+# python manage.py collectstatic --noinput
 ```
 
----
-
-### 6. Create Superuser (Admin)
-
+### 9. (Optional) Create Superuser
 ```bash
 python manage.py createsuperuser
-# Enter: admin / admin@123# / admin
 ```
 
----
-
-### 7. Run the Development Server
-
-#### Linux / macOS
+### 10. Install Gunicorn and Test Run
 ```bash
-python manage.py runserver
-```
-
-#### Windows
-```cmd
-python manage.py runserver
-```
-
-Visit: [http://127.0.0.1:8000](http://127.0.0.1:8000)
-
-Access Django admin: [http://127.0.0.1:8000/admin](http://127.0.0.1:8000/admin)
-
----
-
-## Project Structure
-
-```
-aws-demo-django/
-├── aws_demo/            # Django project settings
-├── aws_demo_app/        # Django application
-├── venv/                # Python virtual environment
-├── manage.py
-├── requirements.txt    # Python dependencies
-└── README.md
-```
-
----
-
-## Additional Notes
-
-- Ensure MySQL service is running before running the Django server.
-- For production deployment, configure **NGINX/Apache** and **Gunicorn** with proper database and static file handling.
-- Customize Material Design UI in `aws_demo_app/templates/` for frontend changes.
-
-
-
-
-## ubuntu server deployment  
-```bash
-# ========================================
-# 1. Update system and install dependencies
-# ========================================
-apt update && apt upgrade -y
-apt install -y software-properties-common build-essential libssl-dev zlib1g-dev \
-libncurses5-dev libffi-dev libsqlite3-dev libreadline-dev libtk8.6 tcl8.6 tk8.6-dev \
-libgdbm-dev libbz2-dev liblzma-dev pkg-config default-libmysqlclient-dev python3.10-dev
-
-# ========================================
-# 2. Install Python 3.10
-# ========================================
-add-apt-repository ppa:deadsnakes/ppa -y
-apt update
-apt install -y python3.10 python3.10-venv python3.10-distutils
-
-# ========================================
-# 3. Verify Python
-# ========================================
-python3.10 --version
-
-# ========================================
-# 4. Setup your Django app directory
-# ========================================
-cd /root
-git clone https://github.com/UnstopableSafar08/aws-demo-django.git
-cd aws-demo-django
-
-# ========================================
-# 5. Create virtual environment and activate
-# ========================================
-python3.10 -m venv venv
-source venv/bin/activate
-
-# ========================================
-# 6. Upgrade pip and install requirements
-# ========================================
-pip install --upgrade pip
-pip install -r requirements.txt
-
-# ========================================
-# 7. Apply database migrations
-# ========================================
-python manage.py makemigrations
-python manage.py migrate
-
-# ========================================
-# 8. Create Django superuser (optional)
-# ========================================
-python manage.py createsuperuser
-
-# ========================================
-# 9. Collect static files
-# ========================================
-python manage.py collectstatic --noinput
-
-# ========================================
-# 10. Run Django app (development mode)
-# ========================================
-python manage.py runserver 0.0.0.0:8000
-
-# ========================================
-# 11. (Optional) For Production with Gunicorn + Nginx
-# ========================================
-# Install production tools
-apt install -y gunicorn nginx
-
-# Test Gunicorn app start
-gunicorn --bind 0.0.0.0:8000 aws_demo_django.wsgi:application
-
-# Configure Nginx reverse proxy
-cat >/etc/nginx/sites-available/django.conf <<'EOF'
-server {
-    listen 80;
-    server_name _;
-    location = /favicon.ico { access_log off; log_not_found off; }
-    location /static/ {
-        root /root/aws-demo-django;
-    }
-    location / {
-        include proxy_params;
-        proxy_pass http://127.0.0.1:8000;
-    }
-}
-EOF
-
-ln -s /etc/nginx/sites-available/django.conf /etc/nginx/sites-enabled/
-nginx -t && systemctl restart nginx && systemctl enable nginx
-
-# ========================================
-# 12. Enable Gunicorn as a systemd service
-# ========================================
-cat >/etc/systemd/system/gunicorn.service <<'EOF'
-[Unit]
-Description=Gunicorn service for Django app
-After=network.target
-
-[Service]
-User=root
-Group=www-data
-WorkingDirectory=/root/aws-demo-django
-ExecStart=/root/aws-demo-django/venv/bin/gunicorn --workers 3 --bind unix:/root/aws-demo-django/gunicorn.sock aws_demo_django.wsgi:application
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-systemctl daemon-reload
-systemctl start gunicorn
-systemctl enable gunicorn
-
-# ========================================
-# 13. Restart services and verify
-# ========================================
-systemctl restart gunicorn
-systemctl restart nginx
-systemctl status gunicorn nginx
-```
-
-
----
-
-## amazonlinux 2023
-```bash
-# ========================================
-# 1. Update System
-# ========================================
-dnf update -y
-
-# ========================================
-# 2. Install Build Tools, Python 3.12, and Libraries
-# ========================================
-dnf install -y git gcc gcc-c++ make pkgconfig openssl-devel bzip2-devel \
-libffi-devel zlib-devel ncurses-devel readline-devel sqlite-devel tk-devel \
-xz-devel gdbm-devel nginx python3.12 python3.12-devel python3.12-pip \
-python3.12-setuptools python3.12-wheel mariadb105-devel
-
-# ========================================
-# 3. Verify Python 3.12
-# ========================================
-python3.12 -V
-pip3.12 -V
-
-# ========================================
-# 4. Clone Django App Repository
-# ========================================
-cd /root
-git clone https://github.com/UnstopableSafar08/aws-demo-django.git
-cd aws-demo-django
-
-# ========================================
-# 5. Create and Activate Python Virtual Environment
-# ========================================
-python3.12 -m venv venv
-source venv/bin/activate
-
-# ========================================
-# 6. Upgrade pip and Install Python Dependencies
-# ========================================
-pip install --upgrade pip setuptools wheel
-pip install -r requirements.txt
-
-# ========================================
-# 7. Apply Database Migrations and Collect Static Files
-# ========================================
-python manage.py makemigrations
-python manage.py migrate
-python manage.py collectstatic --noinput
-
-# ========================================
-# 8. (Optional) Create Superuser
-# ========================================
-# python manage.py createsuperuser
-
-# ========================================
-# 9. Install Gunicorn and Test Run
-# ========================================
 pip install gunicorn
-gunicorn --bind 0.0.0.0:8000 aws_demo_django.wsgi:application
+gunicorn --bind 0.0.0.0:8000 --pythonpath /root/aws-demo-django aws_demo.wsgi:application
+```
 
-# ========================================
-# 10. Configure Gunicorn systemd Service
-# ========================================
+### 11. Configure Gunicorn systemd Service
+```bash
 cat >/etc/systemd/system/gunicorn.service <<'EOF'
 [Unit]
 Description=Gunicorn service for Django app
@@ -401,51 +201,219 @@ EOF
 systemctl daemon-reload
 systemctl enable gunicorn
 systemctl start gunicorn
+```
 
-# ========================================
-# 11. Configure NGINX Reverse Proxy
-# ========================================
-cat >/etc/nginx/conf.d/django.conf <<'EOF'
+### 12. Configure NGINX Reverse Proxy
+```bash
+# python normal
+cat >/etc/nginx/conf.d/django-app.conf <<'EOF'
 server {
     listen 80;
     server_name _;
-
-    location = /favicon.ico { access_log off; log_not_found off; }
-
-    location /static/ {
-        root /root/aws-demo-django;
-    }
-
     location / {
-        include proxy_params;
-        proxy_pass http://unix:/root/aws-demo-django/gunicorn.sock;
+        proxy_pass http://127.0.0.1:8000;
     }
 }
 EOF
 
-nginx -t
+# service cmds
+nginx -t && nginx -s reload
 systemctl enable nginx
 systemctl restart nginx
+```
 
-# ========================================
-# 12. Open Firewall for HTTP/HTTPS (if firewalld is enabled)
-# ========================================
+### 13. Open Firewall for HTTP/HTTPS
+```bash
 if command -v firewall-cmd &>/dev/null; then
     firewall-cmd --permanent --add-service=http
     firewall-cmd --permanent --add-service=https
     firewall-cmd --reload
 fi
+```
 
-# ========================================
-# 13. Verify Services
-# ========================================
+### 14. Verify Services
+```bash
 systemctl status gunicorn
 systemctl status nginx
+```
 
-# ========================================
-# 14. Access Your Django App
-# ========================================
-# Browser: http://<EC2-Public-IP>/
+### 15. Access Your Django App
+```
+http://<EC2-Public-IP>/
+```
+
+### Optional: Install Python 3.10 via Tarball
+```bash
+cd /usr/src
+wget https://www.python.org/ftp/python/3.10.15/Python-3.10.15.tgz
+tar -xzf Python-3.10.15.tgz
+cd Python-3.10.15
+./configure --enable-optimizations --with-ensurepip=install
+make -j$(nproc)
+make altinstall
+python3.10 -V
+```
+
+---
+
+## Ubuntu Server Deployment
+
+### 1. Update system and install dependencies
+
+```bash
+# Updates packages and installs libraries for Python, MySQL, and NGINX
+apt update && apt upgrade -y
+apt install -y software-properties-common build-essential libssl-dev zlib1g-dev \
+libncurses5-dev libffi-dev libsqlite3-dev libreadline-dev libtk8.6 tcl8.6 tk8.6-dev \
+libgdbm-dev libbz2-dev liblzma-dev pkg-config default-libmysqlclient-dev python3.10-dev
+```
+
+### 2. Install Python 3.10
+
+```bash
+# Adds PPA for Python 3.10 and installs it
+add-apt-repository ppa:deadsnakes/ppa -y
+apt update
+apt install -y python3.10 python3.10-venv python3.10-distutils
+```
+
+### 3. Verify Python
+
+```bash
+python3.10 --version
+```
+
+### 4. Setup your Django app directory
+
+```bash
+cd /root
+git clone https://github.com/UnstopableSafar08/aws-demo-django.git
+cd aws-demo-django
+```
+
+### 5. Create virtual environment and activate
+
+```bash
+python3.10 -m venv venv
+source venv/bin/activate
+```
+
+### 6. Upgrade pip and install requirements
+
+```bash
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+### 7. Database Configuration (MySQL 8.0.42)
+```bash
+# Update Django settings.py DATABASES section
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'django_db',
+        'USER': 'django_user',
+        'PASSWORD': 'your_password',
+        'HOST': 'localhost',
+        'PORT': '3306',
+    }
+}
+```
+
+### 8. Apply Database Migrations and Collect Static Files
+```bash
+python manage.py makemigrations
+python manage.py migrate
+# python manage.py collectstatic --noinput
+```
+
+### 9. (Optional) Create Superuser
+```bash
+# python manage.py createsuperuser
+```
 
 
+### 10. Apply database migrations
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+### 11. Create Django superuser (optional)
+
+```bash
+python manage.py createsuperuser
+```
+
+### 12. Collect static files
+
+```bash
+# python manage.py collectstatic --noinput
+```
+
+### 13. Run Django app (development mode)
+
+```bash
+python manage.py runserver 0.0.0.0:8000
+```
+
+### 14. For Production with Gunicorn + Nginx
+
+```bash
+apt install -y gunicorn nginx
+# Test Gunicorn
+gunicorn --bind 0.0.0.0:8000 --pythonpath /root/aws-demo-django aws_demo.wsgi:application
+```
+
+Configure Nginx reverse proxy:
+
+```bash
+cat >/etc/nginx/sites-available/django.conf <<'EOF'
+server {
+    listen 80;
+    server_name _;
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+    }
+}
+EOF
+
+nginx -t && systemctl restart nginx && systemctl enable nginx
+```
+
+Enable Gunicorn as systemd service:
+
+```bash
+cat >/etc/systemd/system/gunicorn.service <<'EOF'
+[Unit]
+Description=Gunicorn service for Django app
+After=network.target
+
+[Service]
+User=root
+Group=www-data
+WorkingDirectory=/root/aws-demo-django
+ExecStart=/root/aws-demo-django/venv/bin/gunicorn --workers 3 --bind unix:/root/aws-demo-django/gunicorn.sock aws_demo_django.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+systemctl start gunicorn
+systemctl enable gunicorn
+```
+
+### Optional: Install Python 3.10 via Tarball
+
+```bash
+cd /usr/src
+wget https://www.python.org/ftp/python/3.10.15/Python-3.10.15.tgz
+tar -xzf Python-3.10.15.tgz
+cd Python-3.10.15
+./configure --enable-optimizations --with-ensurepip=install
+make -j$(nproc)
+make altinstall
+python3.10 -V
 ```
