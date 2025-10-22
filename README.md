@@ -475,3 +475,6 @@ make -j$(nproc)
 make altinstall
 python3.10 -V
 ```
+
+### Demo Output;
+![imageAlt_txt](https://github.com/UnstopableSafar08/aws-demo-django/blob/main/aws_demo_app/templates/aws_demo_app/aws_demo_app1.gif)
