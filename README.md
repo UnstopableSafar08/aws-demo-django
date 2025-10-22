@@ -2,7 +2,6 @@
 
 A Django-based demo application integrating **MySQL** database with modern Material Design UI.  
 This project demonstrates basic **CRUD operations**, database integration, and Django admin functionality.
-
 ---
 
 ## Features
@@ -64,6 +63,10 @@ This README provides step-by-step instructions to deploy a Django application on
     - [Optional: Install Python 3.10 via Tarball](#optional-install-python-310-via-tarball-1)
 
 ---
+
+### Demo Output;
+![demo-gif](https://github.com/UnstopableSafar08/aws-demo-django/blob/main/aws_demo_app/templates/aws_demo_app/aws_demo_app1.gif)
+
 
 ## Setup Instructions
 ## Amazon Linux 2023 Deployment
@@ -475,6 +478,3 @@ make -j$(nproc)
 make altinstall
 python3.10 -V
 ```
-
-### Demo Output;
-![demo-gif](https://github.com/UnstopableSafar08/aws-demo-django/blob/main/aws_demo_app/templates/aws_demo_app/aws_demo_app1.gif)
